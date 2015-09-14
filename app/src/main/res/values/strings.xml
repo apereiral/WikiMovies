@@ -5,4 +5,8 @@
     <string name="action_sort_popular_movies">Most popular</string>
     <string name="action_sort_highest_rated">Highest rate</string>
     <string name="title_activity_detail"></string>
+    <string name="trailers_title">Trailers:</string>
+    <string name="reviews_title">Reviews:</string>
+    <string name="favorite">Add to favorites</string>
+    <string name="unfavorite">Remove from favorites</string>
 </resources>
