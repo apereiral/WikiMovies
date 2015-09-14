@@ -39,14 +39,6 @@
         android:layout_toRightOf="@id/selected_movie_poster"
         android:layout_toEndOf="@id/selected_movie_poster" />
 
-    <!--<RatingBar-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/ratingBar"-->
-        <!--android:layout_below="@id/release_date_text"-->
-        <!--android:layout_toRightOf="@id/selected_movie_poster"-->
-        <!--android:layout_toEndOf="@id/selected_movie_poster" />-->
-
     <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -72,15 +64,5 @@
             android:text="      An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order. There's Max, a man of action and a man of few words, who seeks peace of mind following the loss of his wife and child in the aftermath of the chaos. And Furiosa, a woman of action and a woman who believes her path to survival may be achieved if she can make it across the desert back to her childhood homeland."
             android:id="@+id/overview_text"/>
     </ScrollView>
-
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="8.1/10"-->
-        <!--android:id="@+id/textView3"-->
-        <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-        <!--android:layout_below="@id/ratingBar"-->
-        <!--android:layout_toRightOf="@id/selected_movie_poster"-->
-        <!--android:layout_toEndOf="@id/selected_movie_poster" />-->
 
 </RelativeLayout>

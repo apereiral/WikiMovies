@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,19 +47,6 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-//        String[] fakePostersUrls = {
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185/oJ6l7ZIlN6NZKYkhNvKb5cF3onw.jpg",
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg",
-//                "http://image.tmdb.org/t/p/w185/oJ6l7ZIlN6NZKYkhNvKb5cF3onw.jpg"
-//        };
-
-//        List<String> fakePostersUrlsList = new ArrayList<String>(Arrays.asList(fakePostersUrls));
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("poster_list")) {
             posterList = new ArrayList<>();
@@ -250,10 +236,6 @@ public class MainActivityFragment extends Fragment {
             JSONArray movieListArray = movieListJson.getJSONArray(TMDB_RESULTS);
 
             String[] urlStrs = new String[movieListArray.length()];
-//            if (mTMDBData != null) {
-//                mTMDBData.clear();
-//            }
-//            mTMDBData = new ArrayList<MovieItemData>();
 
             for (int i = 0; i < movieListArray.length(); i++) {
 

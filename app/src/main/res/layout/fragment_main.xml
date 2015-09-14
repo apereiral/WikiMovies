@@ -11,6 +11,5 @@
         android:numColumns="auto_fit"
         android:gravity="center"
         android:id="@+id/grid_movies"/>
-        <!--android:horizontalSpacing="10dp"/>-->
 
 </FrameLayout>
