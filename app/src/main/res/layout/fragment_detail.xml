@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:text="@string/favorite"
             android:gravity="center"
-            android:id="@+id/textView"
+            android:id="@+id/favorite_text"
             android:layout_alignBottom="@+id/favorite_button"
             android:layout_toRightOf="@+id/favorite_button"
             android:layout_toEndOf="@+id/favorite_button"

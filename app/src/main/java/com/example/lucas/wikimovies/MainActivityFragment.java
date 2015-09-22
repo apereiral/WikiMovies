@@ -231,6 +231,7 @@ public class MainActivityFragment extends Fragment {
             final String TMDB_OVERVIEW = "overview";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_RELEASE_DATE = "release_date";
+            final String TMDB_MOVIE_ID = "id";
 
             JSONObject movieListJson = new JSONObject(movieListJsonStr);
             JSONArray movieListArray = movieListJson.getJSONArray(TMDB_RESULTS);
@@ -249,7 +250,7 @@ public class MainActivityFragment extends Fragment {
                         movieInList.getInt(TMDB_USER_RATING),
                         movieInList.getString(TMDB_OVERVIEW),
                         movieInList.getString(TMDB_RELEASE_DATE),
-                        builtUri.toString());
+                        builtUri.toString(), movieInList.getString(TMDB_MOVIE_ID));
 
                 mTMDBData.add(movieItemData);
                 urlStrs[i] = movieItemData.posterPath;
