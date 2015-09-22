@@ -29,6 +29,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -36,8 +42,11 @@ public class MainActivityFragment extends Fragment {
 
     private MovieArrayAdapter mMovieAdapter;
     private List<MovieItemData> mTMDBData;
+    private List<TMDBMoviesList.TMDBMovieItem> mTMDBMoviesListData;
     private List<String> posterList;
     public static final String SORT_METHOD = "SortMethod";
+    final String BASE_URL = "http://api.themoviedb.org/3";
+    final String MY_API_KEY = "b9470b55903065a750eb1eb7bcf80538";
 
     public MainActivityFragment() {
         setHasOptionsMenu(true);
@@ -71,10 +80,26 @@ public class MainActivityFragment extends Fragment {
         });
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("mTMDBData")) {
-            mTMDBData = new ArrayList<>();
+//            mTMDBData = new ArrayList<>();
+            mTMDBMoviesListData = new ArrayList<>();
             SharedPreferences sortMethod = getActivity().getSharedPreferences(SORT_METHOD, 0);
-            FetchMoviesTask moviesTask = new FetchMoviesTask();
-            moviesTask.execute(sortMethod.getString("sort_method", "popularity.desc"));
+//            FetchMoviesTask moviesTask = new FetchMoviesTask();
+//            moviesTask.execute(sortMethod.getString("sort_method", "popularity.desc"));
+            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BASE_URL).build();
+            TMDBService service = restAdapter.create(TMDBService.class);
+            service.getMovieList(sortMethod.getString("sort_method", "popularity.desc"),
+                    MY_API_KEY, new Callback<TMDBMoviesList>() {
+                        @Override
+                        public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                            mTMDBMoviesListData = tmdbMoviesList.results;
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e("WikiMovies", "retrofit callback error 1");
+                        }
+                    });
+
         } else {
             mTMDBData = savedInstanceState.getParcelableArrayList("mTMDBData");
         }
@@ -125,140 +150,140 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
-
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-
-        @Override
-        protected String[] doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String movieListJsonStr = null;
-
-            try {
-
-                final String LIST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-                final String API_KEY = "api_key";
-                final String SORT_BY_PARAM = "sort_by";
-                final String MY_API_KEY = "b9470b55903065a750eb1eb7bcf80538";
-
-                Uri builtUri = Uri.parse(LIST_BASE_URL).buildUpon().
-                        appendQueryParameter(SORT_BY_PARAM, params[0]).
-                        appendQueryParameter(API_KEY,MY_API_KEY).build();
-
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                movieListJsonStr = buffer.toString();
-
-//                Log.v(LOG_TAG, "Movie List JSON string: " + movieListJsonStr);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getMovieListFromJson(movieListJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSON Error ", e);
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String[] strings) {
-
-            if (strings != null) {
-                mMovieAdapter.clear();
-                for (String moviePosterUrlStr : strings) {
-                    mMovieAdapter.add(moviePosterUrlStr);
-                }
-            }
-
-        }
-
-        private String[] getMovieListFromJson(String movieListJsonStr)
-                throws JSONException {
-
-            //The names of the JSON objects that need to be extracted.
-            final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
-            final String POSTER_SIZE_PARAM = "w500";
-            final String POSTER_PATH_PARAM = "poster_path";
-            final String TMDB_RESULTS = "results";
-            final String TMDB_TITLE = "original_title";
-            final String TMDB_OVERVIEW = "overview";
-            final String TMDB_USER_RATING = "vote_average";
-            final String TMDB_RELEASE_DATE = "release_date";
-            final String TMDB_MOVIE_ID = "id";
-
-            JSONObject movieListJson = new JSONObject(movieListJsonStr);
-            JSONArray movieListArray = movieListJson.getJSONArray(TMDB_RESULTS);
-
-            String[] urlStrs = new String[movieListArray.length()];
-
-            for (int i = 0; i < movieListArray.length(); i++) {
-
-                JSONObject movieInList = movieListArray.getJSONObject(i);
-                Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon().
-                        appendPath(POSTER_SIZE_PARAM).
-                        appendEncodedPath(movieInList.getString(POSTER_PATH_PARAM)).
-                        build();
-
-                MovieItemData movieItemData = new MovieItemData(movieInList.getString(TMDB_TITLE),
-                        movieInList.getInt(TMDB_USER_RATING),
-                        movieInList.getString(TMDB_OVERVIEW),
-                        movieInList.getString(TMDB_RELEASE_DATE),
-                        builtUri.toString(), movieInList.getString(TMDB_MOVIE_ID));
-
-                mTMDBData.add(movieItemData);
-                urlStrs[i] = movieItemData.posterPath;
-
-            }
-
-            return urlStrs;
-        }
-    }
+//    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+//
+//        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+//
+//        @Override
+//        protected String[] doInBackground(String... params) {
+//            if (params.length == 0) {
+//                return null;
+//            }
+//
+//            HttpURLConnection urlConnection = null;
+//            BufferedReader reader = null;
+//
+//            String movieListJsonStr = null;
+//
+//            try {
+//
+//                final String LIST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+//                final String API_KEY = "api_key";
+//                final String SORT_BY_PARAM = "sort_by";
+//                final String MY_API_KEY = "b9470b55903065a750eb1eb7bcf80538";
+//
+//                Uri builtUri = Uri.parse(LIST_BASE_URL).buildUpon().
+//                        appendQueryParameter(SORT_BY_PARAM, params[0]).
+//                        appendQueryParameter(API_KEY,MY_API_KEY).build();
+//
+//                URL url = new URL(builtUri.toString());
+//
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setRequestMethod("GET");
+//                urlConnection.connect();
+//
+//                InputStream inputStream = urlConnection.getInputStream();
+//                StringBuffer buffer = new StringBuffer();
+//                if (inputStream == null) {
+//                    // Nothing to do.
+//                    return null;
+//                }
+//                reader = new BufferedReader(new InputStreamReader(inputStream));
+//
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+//                    // But it does make debugging a *lot* easier if you print out the completed
+//                    // buffer for debugging.
+//                    buffer.append(line + "\n");
+//                }
+//
+//                if (buffer.length() == 0) {
+//                    // Stream was empty.  No point in parsing.
+//                    return null;
+//                }
+//                movieListJsonStr = buffer.toString();
+//
+////                Log.v(LOG_TAG, "Movie List JSON string: " + movieListJsonStr);
+//
+//            } catch (IOException e) {
+//                Log.e(LOG_TAG, "Error ", e);
+//                return null;
+//            } finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (final IOException e) {
+//                        Log.e(LOG_TAG, "Error closing stream", e);
+//                    }
+//                }
+//            }
+//
+//            try {
+//                return getMovieListFromJson(movieListJsonStr);
+//            } catch (JSONException e) {
+//                Log.e(LOG_TAG, "JSON Error ", e);
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String[] strings) {
+//
+//            if (strings != null) {
+//                mMovieAdapter.clear();
+//                for (String moviePosterUrlStr : strings) {
+//                    mMovieAdapter.add(moviePosterUrlStr);
+//                }
+//            }
+//
+//        }
+//
+//        private String[] getMovieListFromJson(String movieListJsonStr)
+//                throws JSONException {
+//
+//            //The names of the JSON objects that need to be extracted.
+//            final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
+//            final String POSTER_SIZE_PARAM = "w500";
+//            final String POSTER_PATH_PARAM = "poster_path";
+//            final String TMDB_RESULTS = "results";
+//            final String TMDB_TITLE = "original_title";
+//            final String TMDB_OVERVIEW = "overview";
+//            final String TMDB_USER_RATING = "vote_average";
+//            final String TMDB_RELEASE_DATE = "release_date";
+//            final String TMDB_MOVIE_ID = "id";
+//
+//            JSONObject movieListJson = new JSONObject(movieListJsonStr);
+//            JSONArray movieListArray = movieListJson.getJSONArray(TMDB_RESULTS);
+//
+//            String[] urlStrs = new String[movieListArray.length()];
+//
+//            for (int i = 0; i < movieListArray.length(); i++) {
+//
+//                JSONObject movieInList = movieListArray.getJSONObject(i);
+//                Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon().
+//                        appendPath(POSTER_SIZE_PARAM).
+//                        appendEncodedPath(movieInList.getString(POSTER_PATH_PARAM)).
+//                        build();
+//
+//                MovieItemData movieItemData = new MovieItemData(movieInList.getString(TMDB_TITLE),
+//                        movieInList.getInt(TMDB_USER_RATING),
+//                        movieInList.getString(TMDB_OVERVIEW),
+//                        movieInList.getString(TMDB_RELEASE_DATE),
+//                        builtUri.toString(), movieInList.getString(TMDB_MOVIE_ID));
+//
+//                mTMDBData.add(movieItemData);
+//                urlStrs[i] = movieItemData.posterPath;
+//
+//            }
+//
+//            return urlStrs;
+//        }
+//    }
 
 }
