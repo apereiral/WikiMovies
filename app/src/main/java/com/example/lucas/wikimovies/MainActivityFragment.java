@@ -2,6 +2,7 @@ package com.example.lucas.wikimovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,7 +35,9 @@ public class MainActivityFragment extends Fragment {
     private List<String> posterList;
     public static final String SORT_METHOD = "SortMethod";
     final String BASE_URL = "http://api.themoviedb.org/3";
+    final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     final String MY_API_KEY = "b9470b55903065a750eb1eb7bcf80538";
+    final String POSTER_SIZE_PARAM = "w500";
 
     public MainActivityFragment() {
         setHasOptionsMenu(true);
@@ -62,7 +65,8 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, mTMDBData.get(i));
+//                intent.putExtra(Intent.EXTRA_TEXT, mTMDBData.get(i));
+                intent.putExtra(Intent.EXTRA_TEXT, mTMDBMoviesListData.get(i));
                 startActivity(intent);
             }
         });
@@ -81,12 +85,18 @@ public class MainActivityFragment extends Fragment {
                         public void success(TMDBMoviesList tmdbMoviesList, Response response) {
                             Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
                             mTMDBMoviesListData = tmdbMoviesList.results;
-//                            for (TMDBMovieItem item : mTMDBMoviesListData) {
+                            mMovieAdapter.clear();
+                            for (TMDBMovieItem item : mTMDBMoviesListData) {
 //                                MovieItemData movieData = new MovieItemData(item.original_title,
 //                                        item.vote_average, item.overview, item.release_date,
 //                                        item.poster_path, item.id);
 //                                mTMDBData.add(movieData);
-//                            }
+                                Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon().
+                                    appendPath(POSTER_SIZE_PARAM).
+                                    appendEncodedPath(item.poster_path).
+                                    build();
+                                mMovieAdapter.add(builtUri.toString());
+                            }
                         }
 
                         @Override
@@ -105,7 +115,8 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArrayList("poster_list", (ArrayList<String>) posterList);
-        outState.putParcelableArrayList("mTMDBData", (ArrayList<MovieItemData>) mTMDBData);
+//        outState.putParcelableArrayList("mTMDBData", (ArrayList<MovieItemData>) mTMDBData);
+        outState.putParcelableArrayList("mTMDBMoviesListData", (ArrayList<TMDBMovieItem>) mTMDBMoviesListData);
         super.onSaveInstanceState(outState);
     }
 
