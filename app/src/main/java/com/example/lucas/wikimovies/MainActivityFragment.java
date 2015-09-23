@@ -30,7 +30,7 @@ import retrofit.client.Response;
 public class MainActivityFragment extends Fragment {
 
     private MovieArrayAdapter mMovieAdapter;
-    private List<MovieItemData> mTMDBData;
+//    private List<MovieItemData> mTMDBData;
     private List<TMDBMovieItem> mTMDBMoviesListData;
     private List<String> posterList;
     public static final String SORT_METHOD = "SortMethod";
@@ -106,7 +106,7 @@ public class MainActivityFragment extends Fragment {
                     });
 
         } else {
-            mTMDBData = savedInstanceState.getParcelableArrayList("mTMDBData");
+            mTMDBMoviesListData = savedInstanceState.getParcelableArrayList("mTMDBMoviesListData");
         }
 
         return rootView;
@@ -134,7 +134,7 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
         SharedPreferences sortMethod = getActivity().getSharedPreferences(SORT_METHOD, 0);
         SharedPreferences.Editor editor = sortMethod.edit();
-        mTMDBData = new ArrayList<>();
+//        mTMDBData = new ArrayList<>();
 //        FetchMoviesTask moviesTask = new FetchMoviesTask();
 
         //noinspection SimplifiableIfStatement
@@ -142,6 +142,33 @@ public class MainActivityFragment extends Fragment {
             editor.putString("sort_method", "popularity.desc");
             editor.commit();
 //            moviesTask.execute("popularity.desc");
+            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BASE_URL).build();
+            TMDBService service = restAdapter.create(TMDBService.class);
+            service.getMovieList("popularity.desc",
+                    MY_API_KEY, new Callback<TMDBMoviesList>() {
+                        @Override
+                        public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                            Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+                            mTMDBMoviesListData = tmdbMoviesList.results;
+                            mMovieAdapter.clear();
+                            for (TMDBMovieItem item : mTMDBMoviesListData) {
+//                                MovieItemData movieData = new MovieItemData(item.original_title,
+//                                        item.vote_average, item.overview, item.release_date,
+//                                        item.poster_path, item.id);
+//                                mTMDBData.add(movieData);
+                                Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon().
+                                        appendPath(POSTER_SIZE_PARAM).
+                                        appendEncodedPath(item.poster_path).
+                                        build();
+                                mMovieAdapter.add(builtUri.toString());
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+                        }
+                    });
             return true;
         }
 
@@ -149,6 +176,33 @@ public class MainActivityFragment extends Fragment {
             editor.putString("sort_method", "vote_average.desc");
             editor.commit();
 //            moviesTask.execute("vote_average.desc");
+            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BASE_URL).build();
+            TMDBService service = restAdapter.create(TMDBService.class);
+            service.getMovieList("vote_average.desc",
+                    MY_API_KEY, new Callback<TMDBMoviesList>() {
+                        @Override
+                        public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                            Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+                            mTMDBMoviesListData = tmdbMoviesList.results;
+                            mMovieAdapter.clear();
+                            for (TMDBMovieItem item : mTMDBMoviesListData) {
+//                                MovieItemData movieData = new MovieItemData(item.original_title,
+//                                        item.vote_average, item.overview, item.release_date,
+//                                        item.poster_path, item.id);
+//                                mTMDBData.add(movieData);
+                                Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon().
+                                        appendPath(POSTER_SIZE_PARAM).
+                                        appendEncodedPath(item.poster_path).
+                                        build();
+                                mMovieAdapter.add(builtUri.toString());
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+                        }
+                    });
             return true;
         }
 
