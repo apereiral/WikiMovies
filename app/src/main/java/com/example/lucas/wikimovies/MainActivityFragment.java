@@ -30,7 +30,7 @@ public class MainActivityFragment extends Fragment {
 
     private MovieArrayAdapter mMovieAdapter;
     private List<MovieItemData> mTMDBData;
-    private List<TMDBMoviesList.TMDBMovieItem> mTMDBMoviesListData;
+    private List<TMDBMovieItem> mTMDBMoviesListData;
     private List<String> posterList;
     public static final String SORT_METHOD = "SortMethod";
     final String BASE_URL = "http://api.themoviedb.org/3";
@@ -68,7 +68,7 @@ public class MainActivityFragment extends Fragment {
         });
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("mTMDBData")) {
-            mTMDBData = new ArrayList<>();
+//            mTMDBData = new ArrayList<>();
             mTMDBMoviesListData = new ArrayList<>();
             SharedPreferences sortMethod = getActivity().getSharedPreferences(SORT_METHOD, 0);
 //            FetchMoviesTask moviesTask = new FetchMoviesTask();
@@ -81,12 +81,12 @@ public class MainActivityFragment extends Fragment {
                         public void success(TMDBMoviesList tmdbMoviesList, Response response) {
                             Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
                             mTMDBMoviesListData = tmdbMoviesList.results;
-                            for (TMDBMoviesList.TMDBMovieItem item : mTMDBMoviesListData) {
-                                MovieItemData movieData = new MovieItemData(item.original_title,
-                                        item.vote_average, item.overview, item.release_date,
-                                        item.poster_path, item.id);
-                                mTMDBData.add(movieData);
-                            }
+//                            for (TMDBMovieItem item : mTMDBMoviesListData) {
+//                                MovieItemData movieData = new MovieItemData(item.original_title,
+//                                        item.vote_average, item.overview, item.release_date,
+//                                        item.poster_path, item.id);
+//                                mTMDBData.add(movieData);
+//                            }
                         }
 
                         @Override
