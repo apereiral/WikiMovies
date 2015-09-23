@@ -14,9 +14,9 @@ public class TMDBMoviesList {
         public String overview;
         public String release_date;
         public String poster_path;
-        public int vote_average;
+        public double vote_average;
         public TMDBMovieItem(String backdrop_path, int id, String original_title, String overview,
-                         String release_date, String poster_path, int vote_average){
+                         String release_date, String poster_path, double vote_average){
             this.backdrop_path = backdrop_path;
             this.id = id;
             this.original_title = original_title;

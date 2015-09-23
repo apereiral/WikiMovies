@@ -2,8 +2,6 @@ package com.example.lucas.wikimovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,16 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +68,7 @@ public class MainActivityFragment extends Fragment {
         });
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("mTMDBData")) {
-//            mTMDBData = new ArrayList<>();
+            mTMDBData = new ArrayList<>();
             mTMDBMoviesListData = new ArrayList<>();
             SharedPreferences sortMethod = getActivity().getSharedPreferences(SORT_METHOD, 0);
 //            FetchMoviesTask moviesTask = new FetchMoviesTask();
@@ -91,12 +79,19 @@ public class MainActivityFragment extends Fragment {
                     MY_API_KEY, new Callback<TMDBMoviesList>() {
                         @Override
                         public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                            Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
                             mTMDBMoviesListData = tmdbMoviesList.results;
+                            for (TMDBMoviesList.TMDBMovieItem item : mTMDBMoviesListData) {
+                                MovieItemData movieData = new MovieItemData(item.original_title,
+                                        item.vote_average, item.overview, item.release_date,
+                                        item.poster_path, item.id);
+                                mTMDBData.add(movieData);
+                            }
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
-                            Log.e("WikiMovies", "retrofit callback error 1");
+                            Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
                         }
                     });
 
@@ -129,20 +124,20 @@ public class MainActivityFragment extends Fragment {
         SharedPreferences sortMethod = getActivity().getSharedPreferences(SORT_METHOD, 0);
         SharedPreferences.Editor editor = sortMethod.edit();
         mTMDBData = new ArrayList<>();
-        FetchMoviesTask moviesTask = new FetchMoviesTask();
+//        FetchMoviesTask moviesTask = new FetchMoviesTask();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort_popular_movies) {
             editor.putString("sort_method", "popularity.desc");
             editor.commit();
-            moviesTask.execute("popularity.desc");
+//            moviesTask.execute("popularity.desc");
             return true;
         }
 
         if (id == R.id.action_sort_highest_rate) {
             editor.putString("sort_method", "vote_average.desc");
             editor.commit();
-            moviesTask.execute("vote_average.desc");
+//            moviesTask.execute("vote_average.desc");
             return true;
         }
 
