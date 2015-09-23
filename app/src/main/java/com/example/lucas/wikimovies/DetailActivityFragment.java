@@ -2,6 +2,7 @@ package com.example.lucas.wikimovies;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,7 @@ import com.squareup.picasso.Picasso;
 public class DetailActivityFragment extends Fragment {
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-    private MovieItemData movieItemData;
+    private TMDBMovieItem mTMDBMovieItem;
 
     public DetailActivityFragment() {
     }
@@ -30,17 +31,21 @@ public class DetailActivityFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            movieItemData = intent.getParcelableExtra(Intent.EXTRA_TEXT);
-            Picasso.with(getActivity()).load(movieItemData.posterPath).
+            mTMDBMovieItem = intent.getParcelableExtra(Intent.EXTRA_TEXT);
+            String posterPathURI = Uri.parse("http://image.tmdb.org/t/p/").buildUpon().
+                    appendPath("w500").
+                    appendEncodedPath(mTMDBMovieItem.poster_path).
+                    build().toString();
+            Picasso.with(getActivity()).load(posterPathURI).
                     into((ImageView) rootView.findViewById(R.id.selected_movie_poster));
             ((TextView)rootView.findViewById(R.id.original_title_text)).
-                    setText(movieItemData.originalTitle);
+                    setText(mTMDBMovieItem.original_title);
             ((TextView)rootView.findViewById(R.id.overview_text)).
-                    setText(movieItemData.overview);
+                    setText(mTMDBMovieItem.overview);
             ((TextView)rootView.findViewById(R.id.release_date_text)).
-                    setText(movieItemData.releaseDate);
+                    setText(mTMDBMovieItem.release_date);
             ((TextView)rootView.findViewById(R.id.vote_average_text)).
-                    setText(movieItemData.voteAverage + "/10");
+                    setText(mTMDBMovieItem.vote_average + "/10");
 //            if (((ImageButton)rootView.findViewById(R.id.favorite_button)).isSelected()) {
 //                ((TextView)rootView.findViewById(R.id.favorite_text)).setText(R.string.favorite);
 //            } else {
