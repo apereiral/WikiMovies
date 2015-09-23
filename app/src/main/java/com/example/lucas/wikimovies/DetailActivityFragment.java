@@ -2,7 +2,6 @@ package com.example.lucas.wikimovies;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,11 +31,7 @@ public class DetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             mTMDBMovieItem = intent.getParcelableExtra(Intent.EXTRA_TEXT);
-            String posterPathURI = Uri.parse("http://image.tmdb.org/t/p/").buildUpon().
-                    appendPath("w500").
-                    appendEncodedPath(mTMDBMovieItem.poster_path).
-                    build().toString();
-            Picasso.with(getActivity()).load(posterPathURI).
+            Picasso.with(getActivity()).load(Utility.getPosterPathURL(mTMDBMovieItem.poster_path)).
                     into((ImageView) rootView.findViewById(R.id.selected_movie_poster));
             ((TextView)rootView.findViewById(R.id.original_title_text)).
                     setText(mTMDBMovieItem.original_title);
