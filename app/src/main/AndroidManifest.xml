@@ -26,6 +26,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.lucas.wikimovies.MainActivity" />
         </activity>
+        <provider
+            android:authorities="com.example.lucas.wikimovies.data"
+            android:name=".data.MovieProvider"/>
     </application>
 
 </manifest>
