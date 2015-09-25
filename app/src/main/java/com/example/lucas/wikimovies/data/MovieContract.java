@@ -44,10 +44,10 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildPosterUri (String posterPath) {
-            return CONTENT_URI.buildUpon().
-                    appendPath(posterPath).build();
-        }
+//        public static Uri buildPosterUri (String posterPath) {
+//            return CONTENT_URI.buildUpon().
+//                    appendPath(posterPath).build();
+//        }
 
 //        public static String getPosterPathFromUri (Uri uri) {
 //            return uri.getPathSegments().get(1);

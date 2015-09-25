@@ -41,8 +41,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 //                ") REFERENCES " + MovieContract.TMDBMovieIdEntry.TABLE_NAME + " (" +
 //                MovieContract.TMDBMovieIdEntry._ID + ");";
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
-                MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT + " TEXT NOT NULL, " +
-                MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT + " TEXT NOT NULL " +
+                MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT + " TEXT, " +
+                MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT + " TEXT, " +
+                " UNIQUE ( " + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
                 ");";
 
 //        db.execSQL(SQL_CREATE_TMDB_MOVIE_ID_TABLE);
