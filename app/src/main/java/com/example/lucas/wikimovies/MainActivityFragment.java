@@ -1,8 +1,13 @@
 package com.example.lucas.wikimovies;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,12 +31,13 @@ import retrofit.client.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
 //    private MovieArrayAdapter mMovieAdapter;
     private MovieCursorAdapter mMovieAdapter;
     private List<TMDBMovieItem> mTMDBMoviesListData;
-    private List<String> posterList;
+//    private List<String> posterList;
+    private static final int MOVIE_LOADER = 0;
 
     private static final String[] MOVIE_TABLE_COLUMNS = {
             MovieContract.MovieEntry._ID,
@@ -73,7 +79,6 @@ public class MainActivityFragment extends Fragment {
 //        mMovieAdapter = new MovieArrayAdapter(getActivity(),
 //                R.layout.grid_item_movie,
 //                posterList);
-        
         mMovieAdapter = new MovieCursorAdapter(getActivity(), null, 0);
 
         final GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
@@ -92,40 +97,42 @@ public class MainActivityFragment extends Fragment {
 
             mTMDBMoviesListData = new ArrayList<>();
 
-            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
-            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
-                @Override
-                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
-                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
-                    mTMDBMoviesListData = tmdbMoviesList.results;
-//                    mMovieAdapter.clear();
-                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
-                    for (TMDBMovieItem item : mTMDBMoviesListData) {
-//                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
-                        ContentValues movieValues = new ContentValues();
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+            updateMovieList();
 
-                        contentValuesVector.add(movieValues);
-                    }
-                    if (contentValuesVector.size() > 0) {
-                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
-                        contentValuesVector.toArray(contentValuesArray);
-                        getActivity().getContentResolver().bulkInsert(
-                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
-                }
-            };
-            restAdapter.getMovieList(getActivity(), cb);
+//            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+//            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
+//                @Override
+//                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+//                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+//                    mTMDBMoviesListData = tmdbMoviesList.results;
+////                    mMovieAdapter.clear();
+//                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+//                    for (TMDBMovieItem item : mTMDBMoviesListData) {
+////                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
+//                        ContentValues movieValues = new ContentValues();
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+//
+//                        contentValuesVector.add(movieValues);
+//                    }
+//                    if (contentValuesVector.size() > 0) {
+//                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+//                        contentValuesVector.toArray(contentValuesArray);
+//                        getActivity().getContentResolver().bulkInsert(
+//                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
+//                    }
+//                }
+//
+//                @Override
+//                public void failure(RetrofitError error) {
+//                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+//                }
+//            };
+//            restAdapter.getMovieList(getActivity(), cb);
         } else {
             mTMDBMoviesListData = savedInstanceState.getParcelableArrayList("mTMDBMoviesListData");
         }
@@ -134,8 +141,14 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("poster_list", (ArrayList<String>) posterList);
+//        outState.putStringArrayList("poster_list", (ArrayList<String>) posterList);
         outState.putParcelableArrayList("mTMDBMoviesListData", (ArrayList<TMDBMovieItem>) mTMDBMoviesListData);
         super.onSaveInstanceState(outState);
     }
@@ -157,40 +170,45 @@ public class MainActivityFragment extends Fragment {
         if (id == R.id.action_sort_popular_movies) {
             Utility.setPreferredSortMethod(getActivity(), "popularity.desc");
 
-            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
-            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
-                @Override
-                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
-                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
-                    mTMDBMoviesListData = tmdbMoviesList.results;
-//                    mMovieAdapter.clear();
-                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
-                    for (TMDBMovieItem item : mTMDBMoviesListData) {
-//                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
-                        ContentValues movieValues = new ContentValues();
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+            getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                    null, null);
 
-                        contentValuesVector.add(movieValues);
-                    }
-                    if (contentValuesVector.size() > 0) {
-                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
-                        contentValuesVector.toArray(contentValuesArray);
-                        getActivity().getContentResolver().bulkInsert(
-                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
-                    }
-                }
+            updateMovieList();
 
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
-                }
-            };
-            restAdapter.getMovieList(getActivity(), cb);
+//            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+//            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
+//                @Override
+//                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+//                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+//                    mTMDBMoviesListData = tmdbMoviesList.results;
+////                    mMovieAdapter.clear();
+//                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+//                    for (TMDBMovieItem item : mTMDBMoviesListData) {
+////                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
+//                        ContentValues movieValues = new ContentValues();
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+//
+//                        contentValuesVector.add(movieValues);
+//                    }
+//                    if (contentValuesVector.size() > 0) {
+//                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+//                        contentValuesVector.toArray(contentValuesArray);
+//                        getActivity().getContentResolver().bulkInsert(
+//                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
+//                    }
+//                }
+//
+//                @Override
+//                public void failure(RetrofitError error) {
+//                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+//                }
+//            };
+//            restAdapter.getMovieList(getActivity(), cb);
 
             return true;
         }
@@ -198,40 +216,45 @@ public class MainActivityFragment extends Fragment {
         if (id == R.id.action_sort_highest_rate) {
             Utility.setPreferredSortMethod(getActivity(), "vote_average.desc");
 
-            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
-            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
-                @Override
-                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
-                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
-                    mTMDBMoviesListData = tmdbMoviesList.results;
-//                    mMovieAdapter.clear();
-                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
-                    for (TMDBMovieItem item : mTMDBMoviesListData) {
-//                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
-                        ContentValues movieValues = new ContentValues();
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+            getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                    null, null);
 
-                        contentValuesVector.add(movieValues);
-                    }
-                    if (contentValuesVector.size() > 0) {
-                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
-                        contentValuesVector.toArray(contentValuesArray);
-                        getActivity().getContentResolver().bulkInsert(
-                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
-                    }
-                }
+            updateMovieList();
 
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
-                }
-            };
-            restAdapter.getMovieList(getActivity(), cb);
+//            TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+//            Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
+//                @Override
+//                public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+//                    Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+//                    mTMDBMoviesListData = tmdbMoviesList.results;
+////                    mMovieAdapter.clear();
+//                    Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+//                    for (TMDBMovieItem item : mTMDBMoviesListData) {
+////                        mMovieAdapter.add(Utility.getPosterPathURL(item.poster_path));
+//                        ContentValues movieValues = new ContentValues();
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
+//                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+//
+//                        contentValuesVector.add(movieValues);
+//                    }
+//                    if (contentValuesVector.size() > 0) {
+//                        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+//                        contentValuesVector.toArray(contentValuesArray);
+//                        getActivity().getContentResolver().bulkInsert(
+//                                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
+//                    }
+//                }
+//
+//                @Override
+//                public void failure(RetrofitError error) {
+//                    Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+//                }
+//            };
+//            restAdapter.getMovieList(getActivity(), cb);
 
             return true;
         }
@@ -239,4 +262,54 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI,
+                MOVIE_TABLE_COLUMNS, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mMovieAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
+    }
+
+    private void updateMovieList() {
+        TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+        Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
+            @Override
+            public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
+                mTMDBMoviesListData = tmdbMoviesList.results;
+                Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+                for (TMDBMovieItem item : mTMDBMoviesListData) {
+                    ContentValues movieValues = new ContentValues();
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, item.id);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, item.original_title);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, item.overview);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, item.poster_path);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, item.release_date);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, item.vote_average);
+
+                    contentValuesVector.add(movieValues);
+                }
+                if (contentValuesVector.size() > 0) {
+                    ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+                    contentValuesVector.toArray(contentValuesArray);
+                    getActivity().getContentResolver().bulkInsert(
+                            MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+            }
+        };
+        restAdapter.getMovieList(getActivity(), cb);
+    }
 }
