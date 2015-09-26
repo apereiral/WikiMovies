@@ -1,6 +1,7 @@
 package com.example.lucas.wikimovies;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.lucas.wikimovies.data.MovieContract;
@@ -84,14 +86,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         final GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
         gridView.setAdapter(mMovieAdapter);
 
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(view.getContext(), DetailActivity.class);
-//                intent.putExtra(Intent.EXTRA_TEXT, mTMDBMoviesListData.get(i));
-//                startActivity(intent);
-//            }
-//        });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+                if (cursor != null) {
+                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, mTMDBMoviesListData.get(i));
+                    startActivity(intent);
+                }
+            }
+        });
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("mTMDBMoviesListData")) {
 
