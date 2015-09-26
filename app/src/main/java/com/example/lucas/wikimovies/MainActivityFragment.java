@@ -1,6 +1,7 @@
 package com.example.lucas.wikimovies;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.lucas.wikimovies.data.MovieContract;
@@ -36,28 +38,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //    private List<TMDBMovieItem> mTMDBMoviesListData;
 //    private List<String> posterList;
     private static final int MOVIE_LOADER = 0;
-
-    private static final String[] MOVIE_TABLE_COLUMNS = {
-            MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT,
-            MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT
-    };
-
-    static final int COL_ID = 0;
-    static final int COL_MOVIE_ID = 1;
-    static final int COL_ORIGINAL_TITLE = 2;
-    static final int COL_OVERVIEW = 3;
-    static final int COL_POSTER_PATH = 4;
-    static final int COL_RELEASE_DATE = 5;
-    static final int COL_VOTE_AVERAGE = 6;
-    static final int COL_TRAILERS_JSON = 7;
-    static final int COL_REVIEWS_JSON = 8;
 
     public MainActivityFragment() {
         setHasOptionsMenu(true);
@@ -82,17 +62,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         final GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
         gridView.setAdapter(mMovieAdapter);
 
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
-//                if (cursor != null) {
-//                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
-//                    intent.putExtra(Intent.EXTRA_TEXT, mTMDBMoviesListData.get(i));
-//                    startActivity(intent);
-//                }
-//            }
-//        });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+                if (cursor != null) {
+                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
+                    intent.setData(
+                            MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
+                    startActivity(intent);
+                }
+            }
+        });
 
 //        if (savedInstanceState == null || !savedInstanceState.containsKey("mTMDBMoviesListData")) {
 //
@@ -266,7 +247,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI,
-                MOVIE_TABLE_COLUMNS, null, null, null);
+                Utility.getMovieTableColumns(), null, null, null);
     }
 
     @Override

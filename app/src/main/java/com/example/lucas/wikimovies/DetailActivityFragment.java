@@ -1,8 +1,13 @@
 package com.example.lucas.wikimovies;
 
-import android.app.Fragment;
+
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +20,10 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by Rafael on 23/08/2015.
  */
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-    private TMDBMovieItem mTMDBMovieItem;
+    private static final int MOVIE_DETAIL_LOADER = 0;
 
     public DetailActivityFragment() {
     }
@@ -28,45 +33,65 @@ public class DetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            mTMDBMovieItem = intent.getParcelableExtra(Intent.EXTRA_TEXT);
-            Picasso.with(getActivity()).load(Utility.getPosterPathURL(mTMDBMovieItem.poster_path)).
-                    into((ImageView) rootView.findViewById(R.id.selected_movie_poster));
-            ((TextView)rootView.findViewById(R.id.original_title_text)).
-                    setText(mTMDBMovieItem.original_title);
-            ((TextView)rootView.findViewById(R.id.overview_text)).
-                    setText(mTMDBMovieItem.overview);
-            ((TextView)rootView.findViewById(R.id.release_date_text)).
-                    setText(mTMDBMovieItem.release_date);
-            ((TextView)rootView.findViewById(R.id.vote_average_text)).
-                    setText(mTMDBMovieItem.vote_average + "/10");
-//            if (((ImageButton)rootView.findViewById(R.id.favorite_button)).isSelected()) {
-//                ((TextView)rootView.findViewById(R.id.favorite_text)).setText(R.string.favorite);
-//            } else {
-//                ((TextView)rootView.findViewById(R.id.favorite_text)).setText(R.string.unfavorite);
-//            }
-            ImageButton imageButton = (ImageButton)rootView.findViewById(R.id.favorite_button);
-            final TextView favoriteTextView = (TextView)rootView.findViewById(R.id.favorite_text);
-            if (imageButton.isSelected()){
-                favoriteTextView.setText(R.string.unfavorite);
-            } else {
-                favoriteTextView.setText(R.string.favorite);
-            }
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setSelected(!v.isSelected());
-                    if (v.isSelected()) {
-                        favoriteTextView.setText(R.string.unfavorite);
-                    } else {
-                        favoriteTextView.setText(R.string.favorite);
-                    }
-                }
-            });
+        return rootView;
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_DETAIL_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Intent intent = getActivity().getIntent();
+        if (intent == null) {
+            return null;
         }
 
-        return rootView;
+        return new CursorLoader(getActivity(), intent.getData(), Utility.getMovieTableColumns(),
+                null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (!cursor.moveToFirst()) {return;}
+
+        View view = getView();
+
+        Picasso.with(getActivity()).load(Utility.getPosterPathURL(cursor.getString(
+                Utility.COL_POSTER_PATH))).
+                into((ImageView) view.findViewById(R.id.selected_movie_poster));
+        ((TextView)view.findViewById(R.id.original_title_text)).
+                setText(cursor.getString(Utility.COL_ORIGINAL_TITLE));
+        ((TextView)view.findViewById(R.id.overview_text)).
+                setText(cursor.getString(Utility.COL_OVERVIEW));
+        ((TextView)view.findViewById(R.id.release_date_text)).
+                setText(cursor.getString(Utility.COL_RELEASE_DATE));
+        ((TextView)view.findViewById(R.id.vote_average_text)).
+                setText(cursor.getDouble(Utility.COL_VOTE_AVERAGE) + "/10");
+
+        ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_button);
+        final TextView favoriteTextView = (TextView)view.findViewById(R.id.favorite_text);
+        if (imageButton.isSelected()){
+            favoriteTextView.setText(R.string.unfavorite);
+        } else {
+            favoriteTextView.setText(R.string.favorite);
+        }
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
+                if (v.isSelected()) {
+                    favoriteTextView.setText(R.string.unfavorite);
+                } else {
+                    favoriteTextView.setText(R.string.favorite);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 }

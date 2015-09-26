@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.example.lucas.wikimovies.data.MovieContract;
+
 /**
  * Created by Lucas on 9/23/2015.
  */
@@ -12,6 +14,28 @@ public class Utility {
     static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     static final String POSTER_SIZE_PARAM = "w500";
     static final String SORT_METHOD = "SortMethod";
+
+    private static final String[] MOVIE_TABLE_COLUMNS = {
+            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT,
+            MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT
+    };
+
+    static final int COL_ID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_ORIGINAL_TITLE = 2;
+    static final int COL_OVERVIEW = 3;
+    static final int COL_POSTER_PATH = 4;
+    static final int COL_RELEASE_DATE = 5;
+    static final int COL_VOTE_AVERAGE = 6;
+    static final int COL_TRAILERS_JSON = 7;
+    static final int COL_REVIEWS_JSON = 8;
 
 
     public static String getPosterPathURL(String posterPath) {
@@ -31,6 +55,10 @@ public class Utility {
         SharedPreferences.Editor editor = sortMethod.edit();
         editor.putString("sort_method", sortMethodStr);
         editor.commit();
+    }
+
+    public static String[] getMovieTableColumns() {
+        return MOVIE_TABLE_COLUMNS;
     }
 
 }

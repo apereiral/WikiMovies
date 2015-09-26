@@ -44,6 +44,10 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static String getIdFromUri (Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
 //        public static Uri buildPosterUri (String posterPath) {
 //            return CONTENT_URI.buildUpon().
 //                    appendPath(posterPath).build();
