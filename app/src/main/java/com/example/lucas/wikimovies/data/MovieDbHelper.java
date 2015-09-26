@@ -20,14 +20,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-//        final String SQL_CREATE_TMDB_MOVIE_ID_TABLE = "CREATE TABLE " +
-//                MovieContract.TMDBMovieIdEntry.TABLE_NAME + " (" +
-//                MovieContract.TMDBMovieIdEntry._ID + " INTEGER PRIMARY KEY, " +
-//                MovieContract.TMDBMovieIdEntry.COLUMN_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
-//                MovieContract.TMDBMovieIdEntry.COLUMN_TRAILERS_JSON_OBJECT + " TEXT NOT NULL, " +
-//                MovieContract.TMDBMovieIdEntry.COLUMN_REVIEWS_JSON_OBJECT + " TEXT NOT NULL " +
-//                ");";
-
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " +
                 MovieContract.MovieEntry.TABLE_NAME + " (" +
                 MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -36,17 +28,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieContract.MovieEntry.COLUMN_OVERVIEW + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
-//                MovieContract.MovieEntry.CONLUMN_TMDB_MOVIE_ID_KEY + " INTEGER NOT NULL, " +
-//                " FOREIGN KEY (" + MovieContract.MovieEntry.CONLUMN_TMDB_MOVIE_ID_KEY +
-//                ") REFERENCES " + MovieContract.TMDBMovieIdEntry.TABLE_NAME + " (" +
-//                MovieContract.TMDBMovieIdEntry._ID + ");";
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT + " TEXT, " +
                 " UNIQUE ( " + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
                 ");";
 
-//        db.execSQL(SQL_CREATE_TMDB_MOVIE_ID_TABLE);
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
     }
 
@@ -58,7 +45,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
-//        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.TMDBMovieIdEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
         onCreate(db);
     }
