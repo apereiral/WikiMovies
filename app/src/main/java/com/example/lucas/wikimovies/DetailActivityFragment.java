@@ -3,19 +3,29 @@ package com.example.lucas.wikimovies;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Rafael on 23/08/2015.
@@ -24,6 +34,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final int MOVIE_DETAIL_LOADER = 0;
+    private String[] trailersKeysList;
+    private ArrayAdapter<String> mTrailersAdapter;
+    static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
 
     public DetailActivityFragment() {
     }
@@ -32,6 +45,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        mTrailersAdapter = new ArrayAdapter<String>(getActivity(),
+                R.layout.list_item_trailer, R.id.trailer_name, new ArrayList<String>());
+
+//        ListView trailersList = (ListView) rootView.findViewById(R.id.trailers_list);
+//        trailersList.setAdapter(mTrailersAdapter);
 
         return rootView;
     }
@@ -89,9 +108,80 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 }
             }
         });
+
+        getTrailers(cursor.getInt(Utility.COL_MOVIE_ID), view);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
+
+    private void getTrailers(int movieId, final View view) {
+        TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+        Callback<TMBDMovieTrailersList> cb = new Callback<TMBDMovieTrailersList>() {
+            @Override
+            public void success(TMBDMovieTrailersList tmbdMovieTrailersList, Response response) {
+                Log.v("WikiMovies", "retrofit callback success 2: " + response.toString());
+                trailersKeysList = new String[tmbdMovieTrailersList.results.size()];
+                mTrailersAdapter.clear();
+                LinearLayout trailersList = (LinearLayout) view.findViewById(R.id.trailers_list);
+                trailersList.removeAllViews();
+                for (int i = 0; i < tmbdMovieTrailersList.results.size(); i++) {
+                    if (tmbdMovieTrailersList.results.get(i).site.equalsIgnoreCase("youtube")) {
+                        trailersKeysList[i] = tmbdMovieTrailersList.results.get(i).key;
+                        mTrailersAdapter.add(tmbdMovieTrailersList.results.get(i).name);
+                        final Uri uri =
+                                Uri.parse(YOUTUBE_BASE_URL).buildUpon().appendQueryParameter("v", trailersKeysList[i]).build();
+                        View trailerItem = mTrailersAdapter.getView(i, null, null);
+                        trailersList.addView(trailerItem);
+                        trailerItem.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+//                                if (intent.resolveActivity(v.getContext().getPackageManager()) != null) {
+//                                    startActivity(intent);
+//                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("WikiMovies", "retrofit callback error 2: " + error.toString());
+            }
+        };
+        restAdapter.getTrailerJson(movieId, getActivity(), cb);
+    }
+
+    // TODO: IMPLEMENT getReviews()
+/*    private void getReviews(int movieId, final View view) {
+        TMDBRestAdapter restAdapter = new TMDBRestAdapter();
+        Callback<TMDBMovieReviewsList> cb = new Callback<TMDBMovieReviewsList>() {
+            @Override
+            public void success(TMDBMovieReviewsList tmdbMovieReviewsList, Response response) {
+                Log.v("WikiMovies", "retrofit callback success 3: " + response.toString());
+                String[] authorsList =
+                trailersKeysList = new String[tmdbMovieReviewsList.results.size()];
+                mTrailersAdapter.clear();
+                LinearLayout trailersList = (LinearLayout) view.findViewById(R.id.trailers_list);
+                trailersList.removeAllViews();
+                for (int i = 0; i < tmbdMovieTrailersList.results.size(); i++) {
+                    if (tmbdMovieTrailersList.results.get(i).site.equalsIgnoreCase("youtube")) {
+                        trailersKeysList[i] = tmdbMovieReviewsList.results.get(i).;
+                        mTrailersAdapter.add(tmbdMovieTrailersList.results.get(i).name);
+                        trailersList.addView(mTrailersAdapter.getView(i, null, null));
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("WikiMovies", "retrofit callback error 3: " + error.toString());
+            }
+        };
+        restAdapter.getTrailerJson(movieId, getActivity(), cb);
+    }*/
 }

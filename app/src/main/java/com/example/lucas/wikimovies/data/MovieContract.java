@@ -35,8 +35,10 @@ public class MovieContract {
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_MOVIE_ID = "movie_id";
-        public static final String COLUMN_TRAILERS_JSON_OBJECT = "trailers_json_object";
-        public static final String COLUMN_REVIEWS_JSON_OBJECT = "reviews_json_object";
+//        public static final String COLUMN_TRAILER1 = "trailer1";
+//        public static final String COLUMN_TRAILER2 = "trailer2";
+//        public static final String COLUMN_REVIEW1 = "review1";
+//        public static final String COLUMN_REVIEW2 = "review2";
 
         public static Uri buildMovieUri (long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

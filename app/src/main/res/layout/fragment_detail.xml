@@ -74,13 +74,14 @@
             android:layout_alignParentStart="true"
             android:paddingBottom="@dimen/activity_vertical_margin"/>
 
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/trailers_list"
             android:layout_below="@+id/trailers_tile"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+            android:orientation="vertical" />
 
         <TextView
             android:layout_width="match_parent"
@@ -93,13 +94,14 @@
             android:layout_alignParentStart="true"
             android:paddingBottom="@dimen/activity_vertical_margin"/>
 
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/reviews_list"
             android:layout_below="@+id/reviews_tile"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+            android:orientation="vertical" />
 
         <ImageButton
             android:layout_width="wrap_content"

@@ -23,8 +23,8 @@ public class Utility {
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_TRAILERS_JSON_OBJECT,
-            MovieContract.MovieEntry.COLUMN_REVIEWS_JSON_OBJECT
+//            MovieContract.MovieEntry.COLUMN_TRAILER1,
+//            MovieContract.MovieEntry.COLUMN_REVIEW1
     };
 
     static final int COL_ID = 0;
@@ -34,8 +34,8 @@ public class Utility {
     static final int COL_POSTER_PATH = 4;
     static final int COL_RELEASE_DATE = 5;
     static final int COL_VOTE_AVERAGE = 6;
-    static final int COL_TRAILERS_JSON = 7;
-    static final int COL_REVIEWS_JSON = 8;
+//    static final int COL_TRAILERS_JSON = 7;
+//    static final int COL_REVIEWS_JSON = 8;
 
 
     public static String getPosterPathURL(String posterPath) {

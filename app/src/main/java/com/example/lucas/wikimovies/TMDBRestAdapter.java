@@ -25,4 +25,12 @@ public class TMDBRestAdapter {
         service.getMovieList(Utility.getPreferredSortMethod(context), MY_API_KEY, cb);
     }
 
+    public void getTrailerJson(int movieId, Context context, Callback<TMBDMovieTrailersList> cb) {
+        service.getMovieTrailers(movieId, MY_API_KEY, cb);
+    }
+
+    public void getReviewsJson(int movieId, Context context, Callback<TMDBMovieReviewsList> cb) {
+        service.getMovieReviews(movieId, MY_API_KEY, cb);
+    }
+
 }
