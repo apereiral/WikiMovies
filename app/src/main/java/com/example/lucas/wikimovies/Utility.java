@@ -23,6 +23,7 @@ public class Utility {
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+//            MovieContract.MovieEntry.COLUMN_IS_FAVORITE
 //            MovieContract.MovieEntry.COLUMN_TRAILER1,
 //            MovieContract.MovieEntry.COLUMN_REVIEW1
     };
@@ -34,6 +35,7 @@ public class Utility {
     static final int COL_POSTER_PATH = 4;
     static final int COL_RELEASE_DATE = 5;
     static final int COL_VOTE_AVERAGE = 6;
+//    static final int COL_IS_FAVORITE = 7;
 //    static final int COL_TRAILERS_JSON = 7;
 //    static final int COL_REVIEWS_JSON = 8;
 

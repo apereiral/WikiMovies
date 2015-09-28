@@ -1,6 +1,7 @@
 package com.example.lucas.wikimovies;
 
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.lucas.wikimovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final int MOVIE_DETAIL_LOADER = 0;
+    private static final String FAVORITE = "favorite";
+    private static final String NOT_FAVORITE = "not_favorite";
     private String[] trailersKeysList;
     private ArrayAdapter<String> mTrailersAdapter;
     static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
@@ -77,6 +81,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (!cursor.moveToFirst()) {return;}
 
         View view = getView();
+        if (view == null) {
+            return;
+        }
 
         Picasso.with(getActivity()).load(Utility.getPosterPathURL(cursor.getString(
                 Utility.COL_POSTER_PATH))).
@@ -90,22 +97,53 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ((TextView)view.findViewById(R.id.vote_average_text)).
                 setText(cursor.getDouble(Utility.COL_VOTE_AVERAGE) + "/10");
 
+        final int movieId = cursor.getInt(Utility.COL_MOVIE_ID);
+
+        Cursor favoriteCursor = view.getContext().getContentResolver().
+                query(MovieContract.FavoriteEntry.buildFavoriteWithIdUri(movieId),
+                Utility.getMovieTableColumns(), null, null, null);
+
+        boolean isFavorite = favoriteCursor.moveToFirst();
+
+//        Uri uri = MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID));
+        final ContentValues values = new ContentValues();
+        values.put(MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE,
+                cursor.getString(Utility.COL_ORIGINAL_TITLE));
+        values.put(MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,
+                cursor.getDouble(Utility.COL_VOTE_AVERAGE));
+        values.put(MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,
+                cursor.getString(Utility.COL_RELEASE_DATE));
+        values.put(MovieContract.FavoriteEntry.COLUMN_POSTER_PATH,
+                cursor.getString(Utility.COL_POSTER_PATH));
+        values.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,
+                cursor.getInt(Utility.COL_MOVIE_ID));
+        values.put(MovieContract.FavoriteEntry.COLUMN_OVERVIEW,
+                cursor.getString(Utility.COL_OVERVIEW));
+
+
+
         ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_button);
         final TextView favoriteTextView = (TextView)view.findViewById(R.id.favorite_text);
-        if (imageButton.isSelected()){
+//        if (imageButton.isSelected()){
+        if (isFavorite){
             favoriteTextView.setText(R.string.unfavorite);
+            imageButton.setSelected(true);
         } else {
             favoriteTextView.setText(R.string.favorite);
+            imageButton.setSelected(false);
         }
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setSelected(!v.isSelected());
-                if (v.isSelected()) {
-                    favoriteTextView.setText(R.string.unfavorite);
-                } else {
-                    favoriteTextView.setText(R.string.favorite);
-                }
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setSelected(!v.isSelected());
+                    if (v.isSelected()) {
+                        favoriteTextView.setText(R.string.unfavorite);
+                        v.getContext().getContentResolver().insert(
+                                MovieContract.FavoriteEntry.CONTENT_URI, values);
+                    } else {
+                        favoriteTextView.setText(R.string.favorite);
+                    }
+
             }
         });
 
@@ -132,7 +170,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         trailersKeysList[i] = tmbdMovieTrailersList.results.get(i).key;
                         mTrailersAdapter.add(tmbdMovieTrailersList.results.get(i).name);
                         final Uri uri =
-                                Uri.parse(YOUTUBE_BASE_URL).buildUpon().appendQueryParameter("v", trailersKeysList[i]).build();
+                                Uri.parse(YOUTUBE_BASE_URL).buildUpon().
+                                        appendQueryParameter("v", trailersKeysList[i]).build();
                         View trailerItem = mTrailersAdapter.getView(i, null, null);
                         trailersList.addView(trailerItem);
                         trailerItem.setOnClickListener(new View.OnClickListener() {

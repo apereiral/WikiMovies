@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 8;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -29,12 +29,26 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+//                MovieContract.MovieEntry.COLUMN_IS_FAVORITE + " TEXT NOT NULL, " +
 //                MovieContract.MovieEntry.COLUMN_TRAILER1 + " TEXT, " +
 //                MovieContract.MovieEntry.COLUMN_REVIEW1 + " TEXT, " +
                 " UNIQUE ( " + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
                 ");";
 
+        final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " +
+                MovieContract.FavoriteEntry.TABLE_NAME + " (" +
+                MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_OVERVIEW + " TEXT, " +
+                MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT, " +
+                MovieContract.FavoriteEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                " UNIQUE ( " + MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
+                ");";
+
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
+        db.execSQL(SQL_CREATE_FAVORITES_TABLE);
     }
 
     @Override
@@ -46,6 +60,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
         db.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME);
         onCreate(db);
     }
 }
