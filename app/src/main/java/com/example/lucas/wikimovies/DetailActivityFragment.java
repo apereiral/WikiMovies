@@ -110,6 +110,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         });
 
         getTrailers(cursor.getInt(Utility.COL_MOVIE_ID), view);
+        getReviews(cursor.getInt(Utility.COL_MOVIE_ID), view);
     }
 
     @Override
@@ -157,23 +158,23 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     }
 
     // TODO: IMPLEMENT getReviews()
-/*    private void getReviews(int movieId, final View view) {
+    private void getReviews(int movieId, final View view) {
         TMDBRestAdapter restAdapter = new TMDBRestAdapter();
         Callback<TMDBMovieReviewsList> cb = new Callback<TMDBMovieReviewsList>() {
             @Override
             public void success(TMDBMovieReviewsList tmdbMovieReviewsList, Response response) {
                 Log.v("WikiMovies", "retrofit callback success 3: " + response.toString());
-                String[] authorsList =
-                trailersKeysList = new String[tmdbMovieReviewsList.results.size()];
-                mTrailersAdapter.clear();
-                LinearLayout trailersList = (LinearLayout) view.findViewById(R.id.trailers_list);
-                trailersList.removeAllViews();
-                for (int i = 0; i < tmbdMovieTrailersList.results.size(); i++) {
-                    if (tmbdMovieTrailersList.results.get(i).site.equalsIgnoreCase("youtube")) {
-                        trailersKeysList[i] = tmdbMovieReviewsList.results.get(i).;
-                        mTrailersAdapter.add(tmbdMovieTrailersList.results.get(i).name);
-                        trailersList.addView(mTrailersAdapter.getView(i, null, null));
-                    }
+                LinearLayout reviewsList = (LinearLayout) view.findViewById(R.id.reviews_list);
+                reviewsList.removeAllViews();
+                for (int i = 0; i < tmdbMovieReviewsList.results.size(); i++) {
+                    String author = tmdbMovieReviewsList.results.get(i).author;
+                    String content = tmdbMovieReviewsList.results.get(i).content;
+                    View reviewItem = View.inflate(view.getContext(), R.layout.list_item_review, null);
+                    TextView authorTV = (TextView) reviewItem.findViewById(R.id.author);
+                    authorTV.setText(author);
+                    TextView contentTV = (TextView) reviewItem.findViewById(R.id.content);
+                    contentTV.setText(content);
+                    reviewsList.addView(reviewItem);
                 }
             }
 
@@ -182,6 +183,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 Log.e("WikiMovies", "retrofit callback error 3: " + error.toString());
             }
         };
-        restAdapter.getTrailerJson(movieId, getActivity(), cb);
-    }*/
+        restAdapter.getReviewsJson(movieId, getActivity(), cb);
+    }
 }
