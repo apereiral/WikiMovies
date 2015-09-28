@@ -142,6 +142,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 MovieContract.FavoriteEntry.CONTENT_URI, values);
                     } else {
                         favoriteTextView.setText(R.string.favorite);
+                        v.getContext().getContentResolver().delete(
+                                MovieContract.FavoriteEntry.buildFavoriteWithIdUri(movieId), null,
+                                null);
                     }
 
             }
