@@ -73,6 +73,21 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Utility.getPreferredSortMethod(getActivity()).equals(Utility.SORT_FAVORITES)) {
+            displayFavoritesList();
+        } else {
+            updateMovieList();
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main_fragment, menu);
     }
@@ -87,10 +102,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort_popular_movies) {
-            Utility.setPreferredSortMethod(getActivity(), "popularity.desc");
-
-            getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
-                    null, null);
+            Utility.setPreferredSortMethod(getActivity(), Utility.SORT_MOST_POPULAR);
 
             updateMovieList();
 
@@ -98,12 +110,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
 
         if (id == R.id.action_sort_highest_rate) {
-            Utility.setPreferredSortMethod(getActivity(), "vote_average.desc");
-
-            getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
-                    null, null);
+            Utility.setPreferredSortMethod(getActivity(), Utility.SORT_HIGHEST_RATE);
 
             updateMovieList();
+
+            return true;
+        }
+
+        if (id == R.id.action_sort_favorites) {
+            Utility.setPreferredSortMethod(getActivity(), Utility.SORT_FAVORITES);
+
+            displayFavoritesList();
 
             return true;
         }
@@ -128,6 +145,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void updateMovieList() {
+        getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                null, null);
         TMDBRestAdapter restAdapter = new TMDBRestAdapter();
         Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
             @Override
@@ -159,5 +178,33 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             }
         };
         restAdapter.getMovieList(getActivity(), cb);
+    }
+
+    private void displayFavoritesList() {
+        getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                null, null);
+        Cursor cursor = getActivity().getContentResolver().query(
+                MovieContract.FavoriteEntry.CONTENT_URI, Utility.getMovieTableColumns(), null,
+                null, null);
+        if (!cursor.moveToFirst()) {
+            return;
+        }
+        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+        do {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, cursor.getInt(Utility.COL_MOVIE_ID));
+            values.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, cursor.getString(Utility.COL_ORIGINAL_TITLE));
+            values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, cursor.getString(Utility.COL_OVERVIEW));
+            values.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, cursor.getString(Utility.COL_POSTER_PATH));
+            values.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, cursor.getString(Utility.COL_RELEASE_DATE));
+            values.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, cursor.getDouble(Utility.COL_VOTE_AVERAGE));
+
+            contentValuesVector.add(values);
+        }while(cursor.moveToNext());
+
+        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+        contentValuesVector.toArray(contentValuesArray);
+        getActivity().getContentResolver().bulkInsert(
+                MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
     }
 }

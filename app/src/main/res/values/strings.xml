@@ -4,6 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_sort_popular_movies">Most popular</string>
     <string name="action_sort_highest_rated">Highest rate</string>
+    <string name="action_sort_favorites">My Favorites</string>
     <string name="title_activity_detail"></string>
     <string name="trailers_title">Trailers:</string>
     <string name="reviews_title">Reviews:</string>

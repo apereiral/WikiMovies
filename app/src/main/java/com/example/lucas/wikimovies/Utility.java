@@ -15,6 +15,10 @@ public class Utility {
     static final String POSTER_SIZE_PARAM = "w500";
     static final String SORT_METHOD = "SortMethod";
 
+    static final String SORT_MOST_POPULAR = "popularity.desc";
+    static final String SORT_HIGHEST_RATE = "vote_average.desc";
+    static final String SORT_FAVORITES = "favorites";
+
     private static final String[] MOVIE_TABLE_COLUMNS = {
             MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
