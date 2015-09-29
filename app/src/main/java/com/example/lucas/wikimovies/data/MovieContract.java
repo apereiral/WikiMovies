@@ -36,11 +36,6 @@ public class MovieContract {
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_MOVIE_ID = "movie_id";
-//        public static final String COLUMN_IS_FAVORITE = "is_favorite";
-//        public static final String COLUMN_TRAILER1 = "trailer1";
-//        public static final String COLUMN_TRAILER2 = "trailer2";
-//        public static final String COLUMN_REVIEW1 = "review1";
-//        public static final String COLUMN_REVIEW2 = "review2";
 
         public static Uri buildMovieUri (long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

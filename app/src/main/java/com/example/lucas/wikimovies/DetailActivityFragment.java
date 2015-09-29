@@ -36,8 +36,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final int MOVIE_DETAIL_LOADER = 0;
-    private static final String FAVORITE = "favorite";
-    private static final String NOT_FAVORITE = "not_favorite";
     private String[] trailersKeysList;
     private ArrayAdapter<String> mTrailersAdapter;
     static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
@@ -52,9 +50,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         mTrailersAdapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.list_item_trailer, R.id.trailer_name, new ArrayList<String>());
-
-//        ListView trailersList = (ListView) rootView.findViewById(R.id.trailers_list);
-//        trailersList.setAdapter(mTrailersAdapter);
 
         return rootView;
     }
@@ -105,7 +100,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         boolean isFavorite = favoriteCursor.moveToFirst();
 
-//        Uri uri = MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID));
         final ContentValues values = new ContentValues();
         values.put(MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE,
                 cursor.getString(Utility.COL_ORIGINAL_TITLE));
@@ -124,7 +118,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_button);
         final TextView favoriteTextView = (TextView)view.findViewById(R.id.favorite_text);
-//        if (imageButton.isSelected()){
         if (isFavorite){
             favoriteTextView.setText(R.string.unfavorite);
             imageButton.setSelected(true);
@@ -199,7 +192,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         restAdapter.getTrailerJson(movieId, getActivity(), cb);
     }
 
-    // TODO: IMPLEMENT getReviews()
     private void getReviews(int movieId, final View view) {
         TMDBRestAdapter restAdapter = new TMDBRestAdapter();
         Callback<TMDBMovieReviewsList> cb = new Callback<TMDBMovieReviewsList>() {

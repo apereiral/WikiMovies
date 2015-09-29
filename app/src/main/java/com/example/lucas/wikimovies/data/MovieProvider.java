@@ -184,9 +184,6 @@ public class MovieProvider extends ContentProvider {
                         selection, selectionArgs);
                 break;
             case MOVIE_WITH_ID:
-//                rowsUpdated = updateMovieWithId(uri, values);
-//                Log.v("WikiMovies", "SQLite updateMovieWithId 1 called");
-//                break;
             default:
                 throw new UnsupportedOperationException(
                         "Operation not implemented yet with uri: " + uri);
@@ -197,13 +194,6 @@ public class MovieProvider extends ContentProvider {
         }
         return rowsUpdated;
     }
-
-//    private int updateMovieWithId(Uri uri, ContentValues values) {
-//        Log.v("WikiMovies", "SQLite updateMovieWithId 2 called");
-//        String[] selectionArgs = new String[]{MovieContract.MovieEntry.getIdFromUri(uri)};
-//        return mOpenHelper.getReadableDatabase().update(MovieContract.MovieEntry.TABLE_NAME,
-//                values, sIdSelection, selectionArgs);
-//    }
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
