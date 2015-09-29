@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,8 +21,6 @@ import android.widget.TextView;
 
 import com.example.lucas.wikimovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -37,7 +34,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final int MOVIE_DETAIL_LOADER = 0;
     private String[] trailersKeysList;
-    private ArrayAdapter<String> mTrailersAdapter;
     static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
 
     public DetailActivityFragment() {
@@ -47,9 +43,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
-        mTrailersAdapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.list_item_trailer, R.id.trailer_name, new ArrayList<String>());
 
         return rootView;
     }
@@ -158,17 +151,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             public void success(TMBDMovieTrailersList tmbdMovieTrailersList, Response response) {
                 Log.v("WikiMovies", "retrofit callback success 2: " + response.toString());
                 trailersKeysList = new String[tmbdMovieTrailersList.results.size()];
-                mTrailersAdapter.clear();
                 LinearLayout trailersList = (LinearLayout) view.findViewById(R.id.trailers_list);
                 trailersList.removeAllViews();
                 for (int i = 0; i < tmbdMovieTrailersList.results.size(); i++) {
                     if (tmbdMovieTrailersList.results.get(i).site.equalsIgnoreCase("youtube")) {
                         trailersKeysList[i] = tmbdMovieTrailersList.results.get(i).key;
-                        mTrailersAdapter.add(tmbdMovieTrailersList.results.get(i).name);
                         final Uri uri =
                                 Uri.parse(YOUTUBE_BASE_URL).buildUpon().
                                         appendQueryParameter("v", trailersKeysList[i]).build();
-                        View trailerItem = mTrailersAdapter.getView(i, null, null);
+                        View trailerItem = View.inflate(view.getContext(), R.layout.list_item_trailer, null);
+                        TextView trailerName = (TextView) trailerItem.findViewById(R.id.trailer_name);
+                        trailerName.setText(tmbdMovieTrailersList.results.get(i).name);
                         trailersList.addView(trailerItem);
                         trailerItem.setOnClickListener(new View.OnClickListener() {
                             @Override
