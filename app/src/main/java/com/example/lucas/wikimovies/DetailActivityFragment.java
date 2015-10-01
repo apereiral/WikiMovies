@@ -32,6 +32,8 @@ import retrofit.client.Response;
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    public static final String DETAIL_URI = "DETAIL_URI";
+    private Uri mDetailUri;
     private static final int MOVIE_DETAIL_LOADER = 0;
     private String[] trailersKeysList;
     static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
@@ -42,9 +44,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        return rootView;
+        Bundle args = getArguments();
+        if (args != null) {
+            mDetailUri = args.getParcelable(DETAIL_URI);
+        }
+
+        return inflater.inflate(R.layout.fragment_detail, container, false);
     }
 
     @Override
@@ -55,18 +61,18 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
+        Log.v(LOG_TAG, "In onCreateLoader");
+        if (mDetailUri == null) {
             return null;
         }
 
-        return new CursorLoader(getActivity(), intent.getData(), Utility.getMovieTableColumns(),
+        return new CursorLoader(getActivity(), mDetailUri, Utility.getMovieTableColumns(),
                 null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!cursor.moveToFirst()) {return;}
+        if (cursor == null || !cursor.moveToFirst()) {return;}
 
         View view = getView();
         if (view == null) {

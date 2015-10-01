@@ -1,8 +1,8 @@
 package com.example.lucas.wikimovies;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,6 +36,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private MovieCursorAdapter mMovieAdapter;
     private static final int MOVIE_LOADER = 0;
 
+    public interface DetailCallback {
+        public void onItemSelected (Uri uri);
+    }
+
     public MainActivityFragment() {
         setHasOptionsMenu(true);
     }
@@ -47,7 +51,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mMovieAdapter = new MovieCursorAdapter(getActivity(), null, 0);
 
-        final GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
+        GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
         gridView.setAdapter(mMovieAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -55,10 +59,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
                 if (cursor != null) {
-                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                    intent.setData(
-                            MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
-                    startActivity(intent);
+                    ((DetailCallback) getActivity())
+                            .onItemSelected(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
+//                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
+//                    intent.setData(
+//                            MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
+//                    startActivity(intent);
                 }
             }
         });
@@ -70,11 +76,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
