@@ -1,67 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <RelativeLayout
-        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin">
 
-        <ImageView
-            android:layout_width="wrap_content"
+        <GridLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/selected_movie_poster"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_launcher"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/original_title_text"
-            android:text="Testing title"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/selected_movie_poster"
-            android:layout_toEndOf="@id/selected_movie_poster"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"/>
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:columnCount="3"
+            android:id="@+id/selected_movie_poster_frame">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2015-05-15"
-            android:id="@+id/release_date_text"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:layout_below="@id/original_title_text"
-            android:layout_toRightOf="@id/selected_movie_poster"
-            android:layout_toEndOf="@id/selected_movie_poster" />
+            <ImageView
+                app:layout_row="0"
+                app:layout_column="0"
+                android:adjustViewBounds="true"
+                android:maxHeight="@dimen/max_detail_poster_height"
+                android:maxWidth="@dimen/max_detail_poster_width"
+                tools:src="@drawable/ic_launcher"
+                android:layout_gravity="fill_horizontal"
+                android:id="@+id/selected_movie_poster"
+                android:layout_rowSpan="4"
+                app:layout_columnWeight="1"
+                android:paddingRight="@dimen/detail_poster_horizontal_padding" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="8.1/10"
-            android:id="@+id/vote_average_text"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:layout_below="@id/release_date_text"
-            android:layout_toRightOf="@id/selected_movie_poster"
-            android:layout_toEndOf="@id/selected_movie_poster" />
+
+            <TextView
+                app:layout_row="0"
+                android:layout_column="1"
+                android:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:id="@+id/original_title_text"
+                tools:text="@string/empty_title"
+                android:gravity="fill_horizontal"
+                android:layout_gravity="fill_horizontal"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:fontFamily="sans-serif-condensed"/>
+
+            <TextView
+                app:layout_row="1"
+                app:layout_column="1"
+                android:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:text="@string/empty_release_date"
+                android:gravity="bottom"
+                android:layout_gravity="fill"
+                android:id="@+id/release_date_text"
+                android:fontFamily="sans-serif-condensed"/>
+
+            <TextView
+                app:layout_row="2"
+                app:layout_column="1"
+                android:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:text="@string/empty_vote_average"
+                android:gravity="top"
+                android:layout_gravity="fill"
+                android:id="@+id/vote_average_text"
+                android:fontFamily="sans-serif-condensed"/>
+
+            <ImageButton
+                app:layout_row="3"
+                app:layout_column="1"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:layout_gravity="fill_horizontal"
+                android:id="@+id/favorite_button"
+                android:src="@drawable/star"
+                android:background="#00ffffff"/>
+
+            <TextView
+                app:layout_row="3"
+                app:layout_column="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:gravity="center"
+                android:layout_gravity="fill"
+                android:text="@string/favorite"
+                android:id="@+id/favorite_text"
+                android:fontFamily="sans-serif-condensed"/>
+
+        </GridLayout>
+        <!--<FrameLayout-->
+            <!--android:layout_width="@dimen/frame_poster_width"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/selected_movie_poster_frame"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/ic_launcher"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:id="@+id/selected_movie_poster"/>-->
+        <!--</FrameLayout>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="@style/TextAppearance.AppCompat.Title"-->
+            <!--android:id="@+id/original_title_text"-->
+            <!--android:text="@string/empty_title"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
+            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
+            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+            <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+            <!--android:paddingTop="@dimen/activity_vertical_margin"-->
+            <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
+            <!--android:fontFamily="sans-serif-condensed"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/empty_release_date"-->
+            <!--android:id="@+id/release_date_text"-->
+            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_below="@id/original_title_text"-->
+            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
+            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
+            <!--android:fontFamily="sans-serif-condensed"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/empty_vote_average"-->
+            <!--android:id="@+id/vote_average_text"-->
+            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_below="@id/release_date_text"-->
+            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
+            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
+            <!--android:fontFamily="sans-serif-condensed"/>-->
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="      An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order. There's Max, a man of action and a man of few words, who seeks peace of mind following the loss of his wife and child in the aftermath of the chaos. And Furiosa, a woman of action and a woman who believes her path to survival may be achieved if she can make it across the desert back to her childhood homeland."
+            android:text="@string/empty_overview"
             android:id="@+id/overview_text"
-            android:layout_below="@+id/selected_movie_poster"
+            android:layout_below="@+id/selected_movie_poster_frame"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"/>
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:fontFamily="sans-serif-condensed"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -72,7 +167,8 @@
             android:layout_below="@+id/overview_text"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:paddingBottom="@dimen/activity_vertical_margin"/>
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:fontFamily="sans-serif-condensed"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,7 +177,7 @@
             android:layout_below="@+id/trailers_tile"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:orientation="vertical" />
+            android:orientation="vertical"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -93,7 +189,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"/>
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:fontFamily="sans-serif-condensed"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,29 +199,30 @@
             android:layout_below="@+id/reviews_tile"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:orientation="vertical" />
+            android:orientation="vertical"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/favorite_button"
-            android:layout_alignBottom="@+id/selected_movie_poster"
-            android:layout_alignLeft="@+id/vote_average_text"
-            android:layout_alignStart="@+id/vote_average_text"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:src="@drawable/star"
-            android:background="#00ffffff"/>
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/favorite_button"-->
+            <!--android:layout_alignBottom="@+id/selected_movie_poster_frame"-->
+            <!--android:layout_alignLeft="@+id/vote_average_text"-->
+            <!--android:layout_alignStart="@+id/vote_average_text"-->
+            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+            <!--android:src="@drawable/star"-->
+            <!--android:background="#00ffffff"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/favorite"
-            android:gravity="center"
-            android:id="@+id/favorite_text"
-            android:layout_alignBottom="@+id/favorite_button"
-            android:layout_toRightOf="@+id/favorite_button"
-            android:layout_toEndOf="@+id/favorite_button"
-            android:layout_alignTop="@+id/favorite_button" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/favorite"-->
+            <!--android:gravity="center"-->
+            <!--android:id="@+id/favorite_text"-->
+            <!--android:layout_alignBottom="@+id/favorite_button"-->
+            <!--android:layout_toRightOf="@+id/favorite_button"-->
+            <!--android:layout_toEndOf="@+id/favorite_button"-->
+            <!--android:layout_alignTop="@+id/favorite_button"-->
+            <!--android:fontFamily="sans-serif-condensed"/>-->
 
     </RelativeLayout>
 </ScrollView>

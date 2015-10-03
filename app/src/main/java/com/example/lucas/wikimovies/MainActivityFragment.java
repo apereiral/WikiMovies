@@ -34,6 +34,9 @@ import retrofit.client.Response;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private MovieCursorAdapter mMovieAdapter;
+    private int mPosition;
+    private GridView mGridView;
+    private static final String POSITION_KEY = "position_key";
     private static final int MOVIE_LOADER = 0;
 
     public interface DetailCallback {
@@ -51,23 +54,23 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mMovieAdapter = new MovieCursorAdapter(getActivity(), null, 0);
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.grid_movies);
-        gridView.setAdapter(mMovieAdapter);
+        mGridView = (GridView) rootView.findViewById(R.id.grid_movies);
+        mGridView.setAdapter(mMovieAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+                mPosition = i;
                 if (cursor != null) {
                     ((DetailCallback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
-//                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
-//                    intent.setData(
-//                            MovieContract.MovieEntry.buildMovieUri(cursor.getInt(Utility.COL_ID)));
-//                    startActivity(intent);
                 }
             }
         });
+        if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_KEY)) {
+            mPosition = savedInstanceState.getInt(POSITION_KEY);
+        }
 
         return rootView;
     }
@@ -79,12 +82,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if (Utility.getPreferredSortMethod(getActivity()).equals(Utility.SORT_FAVORITES)) {
             displayFavoritesList();
         } else {
-            updateMovieList();
+          //  updateMovieList();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(POSITION_KEY, mPosition);
         }
     }
 
@@ -138,6 +149,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mMovieAdapter.swapCursor(data);
+        if (mPosition != GridView.INVALID_POSITION) {
+            mGridView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override
@@ -187,7 +201,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Cursor cursor = getActivity().getContentResolver().query(
                 MovieContract.FavoriteEntry.CONTENT_URI, Utility.getMovieTableColumns(), null,
                 null, null);
-        if (!cursor.moveToFirst()) {
+        if (cursor == null || !cursor.moveToFirst()) {
             return;
         }
         Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
@@ -207,5 +221,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         contentValuesVector.toArray(contentValuesArray);
         getActivity().getContentResolver().bulkInsert(
                 MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
+        cursor.close();
     }
 }

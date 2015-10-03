@@ -12,7 +12,7 @@ import com.example.lucas.wikimovies.data.MovieContract;
 public class Utility {
 
     static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
-    static final String POSTER_SIZE_PARAM = "w500";
+    static final String POSTER_SIZE_PARAM = "w342";
     static final String SORT_METHOD = "SortMethod";
 
     static final String SORT_MOST_POPULAR = "popularity.desc";

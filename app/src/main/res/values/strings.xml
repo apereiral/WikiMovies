@@ -10,4 +10,10 @@
     <string name="reviews_title">Reviews:</string>
     <string name="favorite">Add to favorites</string>
     <string name="unfavorite">Remove from favorites</string>
+    <string name="empty_title">Title not available.</string>
+    <string name="empty_release_date">Release date not available.</string>
+    <string name="empty_overview">Overview not available.</string>
+    <string name="empty_vote_average">--/10</string>
+    <string name="empty_trailers_list">0 trailers found.</string>
+    <string name="empty_reviews_list">0 reviews found.</string>
 </resources>

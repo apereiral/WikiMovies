@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -23,11 +23,11 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " +
                 MovieContract.MovieEntry.TABLE_NAME + " (" +
                 MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
-                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
+                MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT, " +
+                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " REAL, " +
                 MovieContract.MovieEntry.COLUMN_OVERVIEW + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT, " +
-                MovieContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT, " +
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 " UNIQUE ( " + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
                 ");";
@@ -35,11 +35,11 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " +
                 MovieContract.FavoriteEntry.TABLE_NAME + " (" +
                 MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
-                MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE + " TEXT, " +
+                MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE + " REAL, " +
                 MovieContract.FavoriteEntry.COLUMN_OVERVIEW + " TEXT, " +
                 MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT, " +
-                MovieContract.FavoriteEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_POSTER_PATH + " TEXT, " +
                 MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 " UNIQUE ( " + MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " ) ON CONFLICT REPLACE" +
                 ");";

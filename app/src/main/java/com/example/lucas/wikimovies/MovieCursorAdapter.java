@@ -26,7 +26,7 @@ public class MovieCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         Picasso.with(context).load(Utility.getPosterPathURL(cursor.getString(
-                Utility.COL_POSTER_PATH))).
+                Utility.COL_POSTER_PATH))).error(R.drawable.ic_launcher).
                 into((ImageView)view.findViewById(R.id.grid_item_movie));
     }
 }

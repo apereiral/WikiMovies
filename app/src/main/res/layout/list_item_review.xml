@@ -10,12 +10,14 @@
         android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
         android:textStyle="bold"
         android:textSize="@dimen/abc_text_size_medium_material"
-        android:id="@+id/author"/>
+        android:id="@+id/author"
+        android:fontFamily="sans-serif-condensed"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="gadrgadfgajl;kgja;ldkjga;dslkgja;ldkgja;ldkvna.xc,vjga;ldkrfgjaxc.vbmalxfkghjaxfkgnzxc vbhalxfhgan.x,cbnlszck vjgbna.d,fxmngczc ,bknzlcf,mnga.zc,vkbj;alfkbja.cvbn.sc,kfnbs.c,zvkbjs;lzckfnmh s.zc,fmbnc.vlkbns"
         android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
-        android:id="@+id/content"/>
+        android:id="@+id/content"
+        android:fontFamily="sans-serif-condensed"/>
 
 </LinearLayout>

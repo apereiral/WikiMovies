@@ -1,15 +1,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivityFragment">
+    android:layout_height="match_parent" android:paddingLeft="@dimen/grid_horizontal_padding"
+    android:paddingRight="@dimen/grid_horizontal_padding"
+    tools:context=".MainActivityFragment">
 
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:numColumns="auto_fit"
+        android:columnWidth="@dimen/grid_item_width"
         android:gravity="center"
-        android:id="@+id/grid_movies"/>
+        android:id="@+id/grid_movies"
+        style="@style/MovieListStyle"/>
 
 </FrameLayout>
