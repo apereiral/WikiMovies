@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lucas.wikimovies.data.MovieContract;
 
@@ -36,6 +39,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private MovieCursorAdapter mMovieAdapter;
     private int mPosition;
     private GridView mGridView;
+    private ProgressBar mProgressBar;
+    private TextView mEmptyListView;
     private static final String POSITION_KEY = "position_key";
     private static final int MOVIE_LOADER = 0;
 
@@ -51,6 +56,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        mProgressBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
+
+        mEmptyListView = (TextView)rootView.findViewById(R.id.empty_list_view);
 
         mMovieAdapter = new MovieCursorAdapter(getActivity(), null, 0);
 
@@ -72,6 +81,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
 
+        if (savedInstanceState == null) {
+            Utility.setPreferredSortMethod(getActivity(), Utility.SORT_MOST_POPULAR);
+            updateMovieList();
+        }
+
         return rootView;
     }
 
@@ -86,8 +100,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onResume();
         if (Utility.getPreferredSortMethod(getActivity()).equals(Utility.SORT_FAVORITES)) {
             displayFavoritesList();
-        } else {
-          //  updateMovieList();
         }
     }
 
@@ -152,6 +164,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (mPosition != GridView.INVALID_POSITION) {
             mGridView.smoothScrollToPosition(mPosition);
         }
+        updateEmptyView(!data.moveToFirst());
     }
 
     @Override
@@ -160,12 +173,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void updateMovieList() {
+//        mEmptyListView.setText("");
         getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
                 null, null);
         TMDBRestAdapter restAdapter = new TMDBRestAdapter();
         Callback<TMDBMoviesList> cb = new Callback<TMDBMoviesList>() {
             @Override
             public void success(TMDBMoviesList tmdbMoviesList, Response response) {
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Log.v("WikiMovies", "retrofit callback success 1: " + response.toString());
                 Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
                 for (TMDBMovieItem item : tmdbMoviesList.results) {
@@ -189,19 +204,28 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
             @Override
             public void failure(RetrofitError error) {
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Log.e("WikiMovies", "retrofit callback error 1: " + error.toString());
+                CharSequence text = "Check your network connection.";
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(getActivity(), text, duration);
+                toast.show();
             }
         };
+        mProgressBar.setVisibility(View.VISIBLE);
+        mEmptyListView.setText("");
         restAdapter.getMovieList(getActivity(), cb);
     }
 
     private void displayFavoritesList() {
+//        mEmptyListView.setText("");
         getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
                 null, null);
         Cursor cursor = getActivity().getContentResolver().query(
                 MovieContract.FavoriteEntry.CONTENT_URI, Utility.getMovieTableColumns(), null,
                 null, null);
         if (cursor == null || !cursor.moveToFirst()) {
+//            mEmptyListView.setText(R.string.empty_favorites_list);
             return;
         }
         Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
@@ -222,5 +246,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getActivity().getContentResolver().bulkInsert(
                 MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
         cursor.close();
+//        updateEmptyView();
+    }
+
+    private void updateEmptyView(boolean isEmptyList) {
+        if (!isEmptyList) {
+            mEmptyListView.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        mEmptyListView.setVisibility(View.VISIBLE);
+
+        if (Utility.getPreferredSortMethod(getActivity()) != Utility.SORT_FAVORITES) {
+            mEmptyListView.setText(R.string.no_connection);
+            mProgressBar.setVisibility(View.INVISIBLE);
+        } else {
+            mEmptyListView.setText(R.string.empty_favorites_list);
+        }
     }
 }

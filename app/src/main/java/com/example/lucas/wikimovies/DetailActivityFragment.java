@@ -17,7 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lucas.wikimovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
@@ -34,6 +36,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     public static final String DETAIL_URI = "DETAIL_URI";
     private Uri mDetailUri;
+    private ProgressBar mProgressBarTrailers;
+    private ProgressBar mProgressBarReviews;
     private static final int MOVIE_DETAIL_LOADER = 0;
     private String[] trailersKeysList;
     static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?";
@@ -50,7 +54,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             mDetailUri = args.getParcelable(DETAIL_URI);
         }
 
-        return inflater.inflate(R.layout.fragment_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        mProgressBarTrailers = (ProgressBar)rootView.findViewById(R.id.progress_bar_trailers);
+        mProgressBarReviews = (ProgressBar)rootView.findViewById(R.id.progress_bar_reviews);
+
+        return rootView;
     }
 
     @Override
@@ -147,11 +155,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 null);
                     }
 
-            }
-        });
+                }
+            });
 
-        getTrailers(cursor.getInt(Utility.COL_MOVIE_ID), view);
-        getReviews(cursor.getInt(Utility.COL_MOVIE_ID), view);
+        if (Utility.isNetworkAvailable(getActivity())) {
+            getTrailers(cursor.getInt(Utility.COL_MOVIE_ID), view);
+            getReviews(cursor.getInt(Utility.COL_MOVIE_ID), view);
+        }
     }
 
     @Override
@@ -163,10 +173,18 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Callback<TMBDMovieTrailersList> cb = new Callback<TMBDMovieTrailersList>() {
             @Override
             public void success(TMBDMovieTrailersList tmbdMovieTrailersList, Response response) {
+                mProgressBarTrailers.setVisibility(View.INVISIBLE);
                 Log.v("WikiMovies", "retrofit callback success 2: " + response.toString());
-                trailersKeysList = new String[tmbdMovieTrailersList.results.size()];
                 LinearLayout trailersList = (LinearLayout) view.findViewById(R.id.trailers_list);
                 trailersList.removeAllViews();
+                if (tmbdMovieTrailersList.results.size() == 0) {
+                    TextView noTrailerTextView = new TextView(view.getContext());
+                    noTrailerTextView.setText(R.string.empty_trailers_list);
+                    noTrailerTextView.setGravity(0);
+                    trailersList.addView(noTrailerTextView);
+                    return;
+                }
+                trailersKeysList = new String[tmbdMovieTrailersList.results.size()];
                 for (int i = 0; i < tmbdMovieTrailersList.results.size(); i++) {
                     if (tmbdMovieTrailersList.results.get(i).site.equalsIgnoreCase("youtube")) {
                         trailersKeysList[i] = tmbdMovieTrailersList.results.get(i).key;
@@ -193,9 +211,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
             @Override
             public void failure(RetrofitError error) {
+                mProgressBarTrailers.setVisibility(View.INVISIBLE);
                 Log.e("WikiMovies", "retrofit callback error 2: " + error.toString());
+                CharSequence text = "Check your network connection.";
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(getActivity(), text, duration);
+                toast.show();
             }
         };
+        mProgressBarTrailers.setVisibility(View.VISIBLE);
         restAdapter.getTrailerJson(movieId, getActivity(), cb);
     }
 
@@ -204,9 +228,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Callback<TMDBMovieReviewsList> cb = new Callback<TMDBMovieReviewsList>() {
             @Override
             public void success(TMDBMovieReviewsList tmdbMovieReviewsList, Response response) {
+                mProgressBarReviews.setVisibility(View.INVISIBLE);
                 Log.v("WikiMovies", "retrofit callback success 3: " + response.toString());
                 LinearLayout reviewsList = (LinearLayout) view.findViewById(R.id.reviews_list);
                 reviewsList.removeAllViews();
+                if (tmdbMovieReviewsList.results.size() == 0) {
+                    TextView noReviewTextView = new TextView(view.getContext());
+                    noReviewTextView.setText(R.string.empty_reviews_list);
+                    noReviewTextView.setGravity(0);
+                    reviewsList.addView(noReviewTextView);
+                    return;
+                }
                 for (int i = 0; i < tmdbMovieReviewsList.results.size(); i++) {
                     String author = tmdbMovieReviewsList.results.get(i).author;
                     String content = tmdbMovieReviewsList.results.get(i).content;
@@ -221,9 +253,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
             @Override
             public void failure(RetrofitError error) {
+                mProgressBarReviews.setVisibility(View.INVISIBLE);
                 Log.e("WikiMovies", "retrofit callback error 3: " + error.toString());
+                CharSequence text = "Check your network connection.";
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(getActivity(), text, duration);
+                toast.show();
             }
         };
+        mProgressBarReviews.setVisibility(View.VISIBLE);
         restAdapter.getReviewsJson(movieId, getActivity(), cb);
     }
 }

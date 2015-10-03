@@ -13,4 +13,21 @@
         android:id="@+id/grid_movies"
         style="@style/MovieListStyle"/>
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_gravity="center"
+        android:id="@+id/progress_bar"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="fill"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/empty_list_view"
+        android:fontFamily="sans-serif-condensed"/>
+
 </FrameLayout>

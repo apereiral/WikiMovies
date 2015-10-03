@@ -2,6 +2,8 @@ package com.example.lucas.wikimovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.example.lucas.wikimovies.data.MovieContract;
@@ -59,6 +61,14 @@ public class Utility {
 
     public static String[] getMovieTableColumns() {
         return MOVIE_TABLE_COLUMNS;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
 }

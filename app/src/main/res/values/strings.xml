@@ -5,7 +5,7 @@
     <string name="action_sort_popular_movies">Most popular</string>
     <string name="action_sort_highest_rated">Highest rate</string>
     <string name="action_sort_favorites">My Favorites</string>
-    <string name="title_activity_detail"></string>
+    <string name="title_activity_detail">Movie Details</string>
     <string name="trailers_title">Trailers:</string>
     <string name="reviews_title">Reviews:</string>
     <string name="favorite">Add to favorites</string>
@@ -16,4 +16,6 @@
     <string name="empty_vote_average">--/10</string>
     <string name="empty_trailers_list">0 trailers found.</string>
     <string name="empty_reviews_list">0 reviews found.</string>
+    <string name="empty_favorites_list">No favorites yet.</string>
+    <string name="no_connection">No connection available. Unable to retrieve movie list.</string>
 </resources>

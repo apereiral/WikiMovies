@@ -177,7 +177,27 @@
             android:layout_below="@+id/trailers_tile"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_gravity="center"
+                android:id="@+id/progress_bar_trailers"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="fill"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/no_connection_trailers_view"
+                android:text="@string/no_connection"
+                android:fontFamily="sans-serif-condensed"/>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -199,7 +219,27 @@
             android:layout_below="@+id/reviews_tile"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_gravity="center"
+                android:id="@+id/progress_bar_reviews"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="fill"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/no_connection_reviews_view"
+                android:text="@string/no_connection"
+                android:fontFamily="sans-serif-condensed"/>
+
+        </LinearLayout>
 
         <!--<ImageButton-->
             <!--android:layout_width="wrap_content"-->
