@@ -104,8 +104,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             ((TextView)view.findViewById(R.id.release_date_text)).
                     setText(cursor.getString(Utility.COL_RELEASE_DATE));
         }
-        ((TextView)view.findViewById(R.id.vote_average_text)).
-                setText(cursor.getDouble(Utility.COL_VOTE_AVERAGE) + "/10");
+        String voteAverageUIFormat = cursor.getDouble(Utility.COL_VOTE_AVERAGE) + "/10";
+        ((TextView) view.findViewById(R.id.vote_average_text)).
+                setText(voteAverageUIFormat);
 
         final int movieId = cursor.getInt(Utility.COL_MOVIE_ID);
 
@@ -129,7 +130,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         values.put(MovieContract.FavoriteEntry.COLUMN_OVERVIEW,
                 cursor.getString(Utility.COL_OVERVIEW));
 
-
+        favoriteCursor.close();
 
         ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_button);
         final TextView favoriteTextView = (TextView)view.findViewById(R.id.favorite_text);

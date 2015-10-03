@@ -173,7 +173,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void updateMovieList() {
-//        mEmptyListView.setText("");
         getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
                 null, null);
         TMDBRestAdapter restAdapter = new TMDBRestAdapter();
@@ -218,14 +217,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void displayFavoritesList() {
-//        mEmptyListView.setText("");
         getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
                 null, null);
         Cursor cursor = getActivity().getContentResolver().query(
                 MovieContract.FavoriteEntry.CONTENT_URI, Utility.getMovieTableColumns(), null,
                 null, null);
         if (cursor == null || !cursor.moveToFirst()) {
-//            mEmptyListView.setText(R.string.empty_favorites_list);
             return;
         }
         Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
@@ -246,7 +243,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getActivity().getContentResolver().bulkInsert(
                 MovieContract.MovieEntry.CONTENT_URI, contentValuesArray);
         cursor.close();
-//        updateEmptyView();
     }
 
     private void updateEmptyView(boolean isEmptyList) {

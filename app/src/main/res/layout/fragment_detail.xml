@@ -94,57 +94,6 @@
                 android:fontFamily="sans-serif-condensed"/>
 
         </GridLayout>
-        <!--<FrameLayout-->
-            <!--android:layout_width="@dimen/frame_poster_width"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/selected_movie_poster_frame"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true">-->
-            <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_launcher"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:id="@+id/selected_movie_poster"/>-->
-        <!--</FrameLayout>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="@style/TextAppearance.AppCompat.Title"-->
-            <!--android:id="@+id/original_title_text"-->
-            <!--android:text="@string/empty_title"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
-            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
-            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
-            <!--android:paddingTop="@dimen/activity_vertical_margin"-->
-            <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
-            <!--android:fontFamily="sans-serif-condensed"/>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/empty_release_date"-->
-            <!--android:id="@+id/release_date_text"-->
-            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_below="@id/original_title_text"-->
-            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
-            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
-            <!--android:fontFamily="sans-serif-condensed"/>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/empty_vote_average"-->
-            <!--android:id="@+id/vote_average_text"-->
-            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_below="@id/release_date_text"-->
-            <!--android:layout_toRightOf="@id/selected_movie_poster_frame"-->
-            <!--android:layout_toEndOf="@id/selected_movie_poster_frame"-->
-            <!--android:fontFamily="sans-serif-condensed"/>-->
 
         <TextView
             android:layout_width="match_parent"
@@ -240,29 +189,5 @@
                 android:fontFamily="sans-serif-condensed"/>
 
         </LinearLayout>
-
-        <!--<ImageButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/favorite_button"-->
-            <!--android:layout_alignBottom="@+id/selected_movie_poster_frame"-->
-            <!--android:layout_alignLeft="@+id/vote_average_text"-->
-            <!--android:layout_alignStart="@+id/vote_average_text"-->
-            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:src="@drawable/star"-->
-            <!--android:background="#00ffffff"/>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/favorite"-->
-            <!--android:gravity="center"-->
-            <!--android:id="@+id/favorite_text"-->
-            <!--android:layout_alignBottom="@+id/favorite_button"-->
-            <!--android:layout_toRightOf="@+id/favorite_button"-->
-            <!--android:layout_toEndOf="@+id/favorite_button"-->
-            <!--android:layout_alignTop="@+id/favorite_button"-->
-            <!--android:fontFamily="sans-serif-condensed"/>-->
-
     </RelativeLayout>
 </ScrollView>
