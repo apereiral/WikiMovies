@@ -17,5 +17,6 @@
     <string name="empty_trailers_list">0 trailers found.</string>
     <string name="empty_reviews_list">0 reviews found.</string>
     <string name="empty_favorites_list">No favorites yet.</string>
+    <string name="empty_detail_view_text">No movie selected yet.</string>
     <string name="no_connection">No connection available. Unable to retrieve movie list.</string>
 </resources>

@@ -31,9 +31,6 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private MovieCursorAdapter mMovieAdapter;
@@ -125,7 +122,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort_popular_movies) {
             Utility.setPreferredSortMethod(getActivity(), Utility.SORT_MOST_POPULAR);
 
@@ -255,8 +251,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         mEmptyListView.setVisibility(View.VISIBLE);
 
         if (Utility.getPreferredSortMethod(getActivity()) != Utility.SORT_FAVORITES) {
-            mEmptyListView.setText(R.string.no_connection);
-            mProgressBar.setVisibility(View.INVISIBLE);
+            if (!Utility.isNetworkAvailable(getActivity())) {
+                mEmptyListView.setText(R.string.no_connection);
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
         } else {
             mEmptyListView.setText(R.string.empty_favorites_list);
         }

@@ -23,11 +23,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         if (findViewById(R.id.detail_fragment_container) != null) {
             mTwoPaneMode = true;
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_fragment_container, new DetailActivityFragment())
-                        .commit();
-            }
         } else {
             mTwoPaneMode = false;
         }
